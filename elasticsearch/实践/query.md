@@ -1,5 +1,5 @@
 # elasticsearch查询
-
+https://blog.csdn.net/supermao1013/article/details/84261526
 ## index的mapping信息
 ```
 "mappings" : {
@@ -146,7 +146,7 @@
       }
     }
 ```
-## 查询和过滤语句
+## 查询上下文和过滤上下文
 ```
 GET profile/_search
 {
