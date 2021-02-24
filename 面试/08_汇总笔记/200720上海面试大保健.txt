@@ -1,0 +1,581 @@
+﻿一、Linux
+    1、常用高级命令
+        top  iotop  ps -ef df -h  netstat free  rpm  tar tail -f 
+    2、查看端口号  查看进程  查看磁盘使用情况
+        netstat      ps -ef     df -h
+二、Shell
+    1、四个工具
+        awk  sed sort  cut 
+    2、 写过哪些shell脚本
+        1）同步脚本  启动停止
+        #!/bin/bash
+        
+        case $1 in
+        "start")
+            for i in hadoop102 hadoop103 hadoop104
+            do
+                // 绝对路径
+            done
+        ;;
+        "stop")
+            for i in hadoop102 hadoop103 hadoop104
+            do
+            
+            done
+        ;;
+        esac
+        
+        2）与mysql交互sqoop  datax
+            mysql               hdfs
+                hadoop  mr
+             //驱动
+             服务器地址 端口号
+             用户名
+             密码
+             路径
+             delete
+             query "select id,name from user where 创建时间=今天 or  操作时间= 今天"  and  命令   
+             新增和变化的同步策略
+             分隔符 \t 
+             压缩
+             官网
+           
+        3）数仓层级内部脚本ods -> ... ads 
+            #!/bin/bash
+            
+            // 定义变量
+            APP=gmall
+            
+            // 获取时间（输入时间、 当前时间-1）
+            
+            sql="
+                找一天=》  遇到时间 $do_date  遇到表  ${APP}.
+                自定义函数  ${APP}.
+            "
+            
+            // 执行sql 
+    3、 union union all 
+    4、单引号 双引号
+        嵌套
+        
+三、Hadoop
+    1、入门
+        1）常用端口号
+            2.x     50070   8088  8020/9000  19888
+            3.x     9870   8088  8020/9000/9820   19888
+                   
+        2）配置文件
+            2.x core-site.xml  hdfs-site.xml  mapred-site.xml  yarn-site.xml  slaves
+            3.x core-site.xml  hdfs-site.xml  mapred-site.xml  yarn-site.xml  workers
+
+    2、HDFS
+        1）读写流程  笔试题   找朋友
+        2）小文件 有什么危害
+            （1）存储
+                128g内存 存储多少个文件块
+                一个文件块占用nn多少个字节 （150字节）
+                128g* 1024m* 1024k*1024 / 150 = 9亿
+            （2）计算
+                1 maptask  1g   1000 1b  
+        3）怎么解决
+            （1）har  
+            （2）计算 combineFileInputformat 统一切片
+            （3）JVM重用
+            开始 3s
+            执行任务 1s 
+ 
+            执行任务 1s 
+            结束  3s 
+            <property>
+                <name>mapreduce.job.jvm.numtasks</name>
+                <value>10</value>
+                <description>How many tasks to run per jvm,if set to -1 ,there is  no limit</description>
+            </property>   
+        4）副本 3个
+        5）块大小
+            1.x         64m
+            2.x 3.x     128m
+            本地          32m
+            企业          128、256m
+            hive        256m         
+    3、MR
+        shuffle及其优化
+        map方法之后 reduce方法之前 混洗的过程叫shuffle 
+    
+    4、Yarn
+        1）工作机制 笔试题
+        
+        2）调度器
+            （1）FIFO  容量  公平
+            （2）默认是哪个调度器 apache  容量   CDH/HDP  => 公平
+            （3）FIFO特点：
+                支持单队列， 先进先出  在企业几乎不用
+                
+            （4） 容量调度器特点
+                支持多队列，  优先满足先进来任务的资源 ，不够资源可以借
+            （5）公平调度器特点
+                支持多队列，不够资源可以借，  所有任务公平享有队列资源
+                按照缺额多少  并发度最高
+            （6）在企业：大企业对并发度要求比较高  服务器性能好，选择公平
+                        中小企业选择容量
+            （7）容量调度器默认几个队列 default队列
+                框架：hive  spark   flink 
+                业务：登录、订单、支付、物流  （100pb ） 60pb
+                
+                菜鸟 来到公司：写了一个递归死循环
+                11.11 降级使用
+                    登录  √
+                        订单  √
+                            支付  X
+                                物流  X
+四、 Zookeeper
+    1、选举机制  半数机制
+    2、安装什么数台  奇数台
+    3、
+        10台服务器：安装多少zk 3台
+        20台服务器：安装多少zk 5台
+        50台服务器：安装多少zk 7台
+        100台服务器：安装多少zk 11台
+        200台服务器：安装多少zk 11台
+        zk台数多好处：可靠性高   坏处  通信延时
+    4、常用命令  ls get  create delete 
+ 
+五、flume（三件事）
+    1、组成（source channel  sink  事务）
+    
+        1）taildir source 
+            断点续传 多目录
+            apache 1.7  cdh 1.6
+            1.7前 自定义 source
+            taildir soure 挂了怎么办
+            数据会重复 但是不会丢
+            自身：事务  不会（消耗性能）
+            下游处理： dwd 层处理  sparkstreaming 去重  redis 
+                        group by  开窗只取窗口第一条
+        2）channel
+            file channel    磁盘  可靠性高  效率低
+            memory channel  内存  可靠性低  效率高
+            kafka channel   kafka 磁盘  可靠性高   效率 
+            kafka channel 高于  memory channel + kafka sink 
+            flume的1.6产生的  有bug  使用有topic头
+            1.7解决bug  
+        3）HDFS sink 
+            小文件  大小 （128m）   时间（1-2小时）  event个数（不用0 ）
+            
+        
+    2、拦截器  监控器 选择器
+        1）拦截器  
+        ETL：  判断json是否完整。  
+        时间戳：  获取日志的时间，做为分区时间
+        自定义拦截器步骤：定义类继承interceptor接口 重写4个方法（初始化、单event 多event 关闭） 静态内部类 builder
+        打包+ 上传flume/lib  => 在配置文件中 全类名$builder
+        ETL拦截器不用行不行  可以   dwd  sparkstreaming 
+        
+        2）选择器
+            re...  默认 把数据发往下一级所有通道
+            mul    发往指定通道
+        3） 监控器
+            g 
+            尝试提交次数远远 大于最终提交成功次数
+            调优：
+                自身      提高内存   2000m(flume-env.sh )  4-6g
+                11.11 找兄弟
+                日志服务器什么配置：8-32g 
+
+    3、优化及挂了怎么办
+        1）file channel    能多目录的多目录（多磁盘）
+        2）HDFS sink 
+            小文件  大小 （128m）   时间（1-2小时）  event个数（不用0 ）
+        3）调优：
+                自身      提高内存   2000m(flume-env.sh )  4-6g
+                11.11 找兄弟
+                日志服务器什么配置：8-32g 
+        4）flume挂了怎么办？
+            memory channel   100个event    普通日志
+            file channel  100万个event    金融和钱有关的。
+            taildir source  不丢 可能重复 
+            重启
+            
+六、kafka（23件事）
+    1、基础信息
+        1）组成     生产者 broker  消费者   zk （broker信息  消费者消费）
+        2）kafka安装多少台    2 * (生产者峰值生产速率 * 副本 / 100) + 1= 3台
+        3）压测：生产者峰值生产速率 消费者峰值消费速率 
+        4）副本：2-3个  默认1个  2个居多
+            副本多： 好处 ：可靠性高    坏处  增加网络IO
+        5）kafka中速率
+            100万日活   100条  1k 
+            每天日志：100万*100条 =1亿条
+            1亿条 / (24 * 3600)= 1150 条/s 
+            1m/s 7-12点高峰
+            20m/s    1-2万在线
+        6）保存时间： 默认7天 =》 3天  oppo 6小时  实时数仓  1个月
+        7）kafka是否做监控  kafka eagle 开源  他们公司自定义的  仰视大佬
+        8）分区： 期望速率t 100m/s   生产者峰值生产速率tp 20m/s  消费者峰值消费速率 tc 40m/s
+        
+            分区数= t / min(tp,tc) =  100m/s  /  20 = 5个
+            
+            消费者 增加对应CPU核数 
+        9）磁盘空间预留多大
+            1亿条 * 1k = 100g
+            100g * 3天 * 2个副本 / 0.7  = 1T 
+        10）分区分配策略
+            Range 默认
+            10分区  3个消费
+            0 1 2 3   数据倾斜
+            4 5 6
+            7 8 9 
+            
+            
+            RoundRobin   全部随机打散，  轮询
+        11）ISR 
+            解决leader挂了谁当老大
+            进入到isr队列的都有条件当老大
+            旧版本：  延迟时间、延迟条数  新版本： 延迟时间 
+        12）多少个topic    
+            必须满足下一级所有消费者
+            
+            极端情况 一张表一个topic
+    
+    2、挂了
+        短期  flume channel 缓存 
+        长期  日志服务器30天日志
+        重启
+    
+    3、丢了
+        ack 
+        0   不需要应答   可靠性低   效率高 
+        1   leader应答   可靠性一般   效率一般
+        -1  leader + follower 应答  可靠性高   效率低 
+        在企业中怎么用：
+            0 不用
+            1 用   普通日志 
+            -1 用  金融 获取有钱公司
+    
+    4、重复了
+        自身 ：        事务 、幂等性  ack =-1 
+        下一级处理： hive  dwd  sparkstreaming
+    
+    
+    5、积压了
+        增加分区  1=》 5个分区    消费者 必须增加消费CPU核数 1 =》 5个
+        增加消费者每批次消费速率  
+            1000个event/s  =》 2000个event  3000个
+    
+    
+    6、 优化
+        1）7天  3天
+        2）副本 1个   2个 
+        3）内存  
+        4）通信时间
+    
+    
+    7、杂七杂八
+        1）1条日志2m    
+        2）过期了  删除（生产）   压缩
+        3）kafka如何高效读写
+            （1）集群  设置分区数  提高并发度
+            （2）顺序读写   600M/s，而随机写只有100K/s。
+            （3）零拷贝技术
+        4） Kafka中的数据是有序的吗    
+            单分区内部有序
+            
+七、Hive（10件）
+    1、组成
+        
+    2、与mysql区别
+                mysql      hive
+     数据量大    小         大 
+        速度   小增删改查   大数据量的查询
+    
+    3、内部表和外部表区别
+        元数据  原始数据
+        删除数据： 
+                内部表   元数据  原始数据
+                外部表  元数据
+        在生产环境，  只有自己使用的临时表，是内部表        
+    
+       
+    4、4个by
+        order by   全局排序  在企业用的不多  （数据倾斜 oom ）
+        sort by     排序
+        d  by      分区   sort by  + d  by  大量使用
+        c by        字段相同 
+    
+    5、系统函数
+        日 周 月  年   date_add  date_sub   next_day   date_format  last_day
+        json   get_json_object 
+ 
+    6、自定义函数
+        UDF     解析字段  一进一出  一行进 一行出
+        UDTF    解析字段  一进多出  flatmap
+        
+        自定义UDF步骤：定义类 继承 UDF   evaluate  方法
+        自定义UDTF步骤 ：定义类 继承G..UDTF  重写三个方法（初始化（校验返回值类型和名称）、process  关闭）
+        
+        打包+上传 HDFS  在hive客户端注册
+        
+        系统函数就能完成，为什么还要自定义？
+        方便调试bug  
+        ip => 地名  =》 自定义 
+        
+    7、窗口函数
+        rank   over   topn   手写
+    
+    8、优化
+        1）mapjoin默认打开，不要关闭
+        2）提前行列过滤   join  where  =>  where  join 
+        3）创建分区表、分桶表
+        4）小文件
+            （1）JVM重用
+            （2）combineHiveInputformat
+            （3）merge maponly任务默认打开  将小于16m  的文件合并成256m
+                mapreduce   需要打开
+        5）压缩（map输出  snappy lzo）  map  reduce 
+        6）列式存储
+            id  name  age
+            1   zs    18
+            2   li     19
+            行  1   zs    18   2   li     19
+            列：1  2  zs  li   18  19
+            select name from user
+        7）提前进行combiner  不影响最终业务逻辑
+        8）合理设置map个数和reduce个数
+            max(0, min(块，long最大值))
+            128m  => 1g内存
+        9） mr tez  spark 
+      
+    9、数据倾斜
+        
+
+    
+    10、杂七杂八
+
+八、Spark 
+    1、入门
+        1）hadoop  解决海量数据的存储和计算
+            spark是解决什么问题的   计算
+        2）spark为什么有自己的spark standalone 
+        3）几种运行模式
+            （1）local     测试用
+            （2）standalone  对性能要求高的场景  几乎不用
+                    spark-env.sh  slaves 
+            （3）yarn    大量使用 
+                spark-env.sh
+                客户端
+                集群
+                
+            （4）m   不用 
+            （5）k8s  
+        4）常用端口号
+            （1）4040     spark shell
+            （2）7077     内部通讯端口   9000 8020
+            （3）8080                     8088
+            （4）18080                    19888
+        5）手写wordcount
+    
+    2、spark core 
+        1）RDD   算子相关的在 E    其他的在D
+        2）RDD的五大属性
+            （1）标记数据是哪个分区的
+            （2）计算
+            （3）分区器
+            （4）血缘依赖
+            （5）移动数据不如移动计算
+        3）集合 默认分区    集合设置分区
+            文件  默认分区  文件设置分区（ max (0, min (数据长度，块大小))）
+        4）常用行动算子
+            （1）单value
+                map
+                mapp
+                mappwit
+                flatmap
+                glom
+                group by 
+                filter 
+                sample
+                pipe
+                repartiton
+                co 
+            
+            （2）双value
+                zip 
+            
+            
+            （3）kv 
+                partitionby
+                
+                reducebykey  预聚合
+                groupbykey   分组         
+                
+                reducebykey     没有输入参数  分区内和分区间逻辑 相同
+                foldbykey       有输入参数  分区内和分区间逻辑 可以相同
+                ag                  有输入参数  分区内和分区间逻辑  可以不相同
+                combinebykey    输入参数可以变换结构   分区内和分区间逻辑  可以不相同
+                
+                mapvalues
+                sortbykey
+        5）常用行动算子     
+
+            reduce
+            take
+            first 
+            save 
+            foreach
+            collect
+        6）序列化
+            选择KRYO序列化  比java serialize性能高
+           宽依赖（shuffle ）  窄依赖
+           application  sparkcontext
+           job          action 个数
+           stage        shuffle + 1
+           task         每个阶段最后一个算子 分区个数
+        8）cache     不切断血缘  磁盘或者内存
+            checkpoint 切断血缘  HDFS 
+            cache + checkpoint
+        9）分区  
+            hash    
+            range 
+        10）累加器
+        
+        copy add merge
+        11）广播变量
+      
+    3、spark sql 
+        rdd  df  ds
+        
+        hive on  spark    引擎 spark 引擎  底层执行的是rdd  mysql 
+        
+        spark sql     引擎 spark  sql （df  ds ）  元数据  
+                    hive  derby 
+                    hive  mysql 
+        自定义UDAF  备注问题
+    
+    
+    4、spark streaming
+
+九、HBase
+
+	数据流程：
+		(1)读
+		(2)写
+		(3)刷写(不建议使用太多的列族,删除数据)
+		(4)合并(删除数据)
+		(5)切分(预分区)
+	
+	RowKey设计:
+		(1)理论(原则):散列、唯一、长度
+		(2)场景:电信业务 
+		13412341234 1897896789 2020-01-07 12:12:12 562
+		需求:根据手机号查询某段时间(天、月、年)内通话详情！！！
+		a.预分区:1000个
+			00|
+		00|	01|
+		01| 02|
+		02| 03|
+		...
+		09|
+		b.设计RowKey分区号
+			分区号:决定当前这条数据去往哪一个分区！
+			00_  01_  02_ ... 09_
+			轮询:散列来说,最好的方式,查询很不方便,所有查询都需要全表扫描。
+			0(手机号%1000)_ :由于每个人通话次数差距较大,有可能会有数据倾斜。
+			0(手机号结合时间%1000)_:月
+		c.拼接RowKey：想要按照什么字段进行聚合查询,在拼接的时候该字段前移
+			00_手机号_时间_手机号(被叫)_通话时间
+			01_时间_手机号  X
+	
+	二级索引:
+		一级索引:RowKey
+		Phoenix:协处理器,ES
+		分类:
+			全局：建立索引表(读)
+			本地：将索引和数据放在原表中(同一个Region)(写)
+		
+Flink面试题总结
+    一、任务提交
+        1.	Flink怎么提交？(脚本  Web页面)
+        2.	Flink集群规模？Flink的数据量？在Flink项目中做了什么？
+        3.	Flink提交作业的流程，以及与Yarn是如何交互的？
+        4.	Yarn-session与Per Job优缺点。
+        5.	Flink提交Job的方式以及参数如何设置？
+        6.	介绍一下Flink中的JobManger(切分任务、申请Slot、CK)和TaskManager(Slot、任务执行)。
+        7.	说一下Slot，业务中一个TaskManager设置几个slot，连接的kafka的分区数是多少。
+        8.	怎么修改正在运行的Flink程序？如果有新的实时指标你们是怎么上线的？
+
+    二、状态编程
+        9.	说一下状态编程（Operator State，Keyed State），Flink的状态是什么，分为几种？
+        10.	10个int以数组的形式保存,保存在什么状态好？VlaueState还是ListState？存在哪个的性能比较好？
+        11.	使用MapState，group by id 如何设计？
+        12.	Flink是如何管理Kafka的Offset，使用什么类型的状态保存offset？
+
+    三、窗口与Watermark
+        13.	Flink时间语义。
+        14.	什么是Watermark及主要作用？什么时候去触发计算?
+        本质:流中一个特殊的数据(时间戳),描述的是事件进展的机制。
+        作用:处理乱序数据问题,延迟关窗。
+        15.	消息超过Watermark的时间会丢失数据吗? 
+        延迟处理 + 侧输出流
+        16.	开窗函数有哪些？（五种）
+        时间窗口:滚动、滑动、会话
+        计数窗口:滚动、滑动
+        17.	Flink开发哪个窗口用的最多（最好随手举一个例子表面怎么用的）
+        18.	既然是开窗为什么一定要转Flink（说时间语义:乱序数据）
+        19.	1小时的滚动窗口,一小时处理一次的压力比较大,想让他5分钟处理一次，怎么办？ 
+        自定义触发器，4个方法，一个Close三个用于控制计算和输出
+        20.	Flink开窗5分钟被同一用户连续访问60次，需要把他的访问信息调出来，你是怎么做的？
+        21.	Watermark的传递问题。
+
+    四、Checkpoint
+        22.	Flink Checkpoint的实现原理（分布式快照）
+        23.	Flink的Checkpoint机制以及精准一次性消费如何实现？
+        24.	Savapoint了解多少？
+        25.	作业挂掉了，恢复上一个Checkpoint，用什么命令？(bin/flink -s hdfs://hadoop102:8020/flink/save/... -c com.atguigu.WordCount xxx.jar)
+        26.	什么是Flink的非barrier对齐？（1.11版本）
+        https://blog.csdn.net/nazeniwaresakini/article/details/107954076
+
+    五、双流JOIN
+        27.	Spark和Flink的双流JOIN。
+        28.	A表left join B表
+        1）A表数据来了，B数据没来
+        2）A表数据来了，B在规定时间内到
+        3）A表数据来了，B在规定时间之后到
+        这个问题，process中两种算子（connect，join）分别说明，Flink SQL（撤回流）可以写两种风格，种类很多。
+
+    六、Spark与Flink对比
+        29.	Spark与Flink区别。
+        本质(世界观)：Spark微批处理(时间驱动)，Flink事件驱动。
+        时间语义(窗口，乱序数据)、状态编程、CK
+        30.	Flink的Key By和Spark的 Group By有什么区别？
+        31.	Spark必须要手动维护offset来保证精准一次性吗?(转到了Flink去解决这个问题)
+        32.	为什么要用Flink替代SparkStreaming(应该深入的去讲一下Flink)
+
+    七、其他
+        33.	Flink用什么监控，如何有效处理数据积压？
+        监控：https://cloud.tencent.com/developer/article/1626504
+        反压(背压)：https://blog.csdn.net/weixin_49060400/article/details/112253767
+        34.	使用Flink统计订单表的GMV，如果MySQL中的数据出现错误，之后在MySQL中做数据的修改操作，那么Flink程序如何保证GMV的正确性，你们是如何解决？
+        离线计算
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+
+
+    
+
+        
+        
+        
+        
+        
+        
+        
+        
