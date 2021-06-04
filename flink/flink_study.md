@@ -40,3 +40,22 @@ flink的action命令有
  cancel:取消一个正在运行的程序       
  savepoint:触发生成检查点
 
+flink run -m yarn-cluster -p 20 -ynm BuryTestLyh -yjm 2048 -ytm 4096 -c com.lyh.flink.ods.BuryTest /home/hadoop/weather_test/flink/test/flink_study-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+flink run -t yarn-per-job -yqu task_moji -p 20 -ynm BuryTestLyh -yjm 2048 -ytm 4096 -c com.lyh.flink.ods.BuryTest /home/hadoop/weather_test/flink/test/flink_study-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+flink run -t yarn-per-job -yqu task_moji -p 20 -ynm BuryTestLyh -yjm 2048 -ytm 4096 -c com.lyh.flink.ods.BuryTest /home/hadoop/weather_test/flink/test/flink_study-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+
+flink run -m yarn-cluster -yqu task_moji -p 20 -ynm BuryTestLyh -yjm 2048 -ytm 4096 -c com.lyh.flink.ods.BuryTest /home/hadoop/weather_test/flink/test/flink_study.jar
+
+以application模式在yarn上运行TopSpeedWindowing.jar
+/data1/moji/soft/flink/bin/flink run-application -t yarn-application /data1/moji/soft/flink/examples/streaming/TopSpeedWindowing.jar
+/data1/moji/soft/flink/bin/flink list -t yarn-application -Dyarn.application.id=application_1586917794041_1336951
+/data1/moji/soft/flink/bin/flink cancel -t yarn-application -Dyarn.application.id=application_1586917794041_1336951 18604b0a3189449a9f62c70690aaf2a6
+以yarn-per-job模式在yarn上运行TopSpeedWindowing.jar
+/data1/moji/soft/flink/bin/flink run -yqu task_moji -ynm BuryTestLyh -t yarn-per-job --detached /data1/moji/soft/flink/examples/streaming/TopSpeedWindowing.jar
+/data1/moji/soft/flink/bin/flink list -t yarn-per-job -Dyarn.application.id=application_1586917794041_1337546
+/data1/moji/soft/flink/bin/flink cancel -t yarn-per-job -Dyarn.application.id=application_1586917794041_1337546 c1634ca0183cdf0b8e812929e8709e82
+
+以session模式运行，session模式中的操作模式有attached和detached两种方式
